@@ -1,24 +1,23 @@
 import React from "react";
+import Header from "./components/header/Header";
 import "./App.css";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import NewOrder from "./pages/NewOrder";
 
 function App() {
   return (
-    <div className="App">
-      <header>
-        <nav>
-          <ul id="nav-list">
-            <li className="nav-item">
-              <a href="#">菜單</a>
-            </li>
-            <li className="nav-item">
-              <a href="#">我要訂單</a>
-            </li>
-          </ul>
-        </nav>
-      </header>
-
-      <main></main>
-    </div>
+    <BrowserRouter>
+      <Header />
+      <Switch>
+        <Route path="/" exact>
+          首頁
+        </Route>
+        <Route path="/menu">菜單</Route>
+        <Route path="/order">
+          <NewOrder />
+        </Route>
+      </Switch>
+    </BrowserRouter>
   );
 }
 
