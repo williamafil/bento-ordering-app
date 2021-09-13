@@ -13,6 +13,15 @@ const NewOrder = () => {
   const [veggiePrice, setVeggiePrice] = useState(0);
   const [currentTotal, setCurrentTotal] = useState(0);
 
+  const [optValidations, setOptValidations] = useState({
+    mainCourse: null,
+    sauce: null,
+    starch: null,
+    veggie: null,
+    nuts: null,
+  });
+  const [tabMainCourse, setTabMainCourse] = useState(true);
+
   useEffect(() => {
     setCurrentTotal(mainCoursePrice + veggiePrice);
   }, [mainCoursePrice, veggiePrice]);
@@ -82,20 +91,58 @@ const NewOrder = () => {
     setNuts(selectedNuts);
   }
 
+  function onSubmitHandler(e) {
+    e.preventDefault();
+    if (
+      Object.keys(mainCourse).length &&
+      Object.keys(sauce).length &&
+      Object.keys(starch).length &&
+      veggie.length >= 7 &&
+      Object.keys(nuts).length
+    ) {
+      console.log("ok");
+    } else {
+      console.log("NOT ok");
+      Object.keys(optValidations).map((key) => {
+        console.log(Object.keys(key));
+        console.log(Object.keys([key]));
+
+        if (Object.keys(key).length) {
+          setOptValidations((prevState) => ({ ...prevState, [key]: false }));
+        } else {
+          setOptValidations((prevState) => ({ ...prevState, [key]: true }));
+        }
+      });
+    }
+  }
+
   return (
     <main className="container mx-auto py-4">
       <h2 className="text-center text-xl font-semibold">建立訂單</h2>
 
       <div className="flex">
         <section className="w-8/12">
-          <form>
+          <form onSubmit={onSubmitHandler}>
             {/* :::MAIN COURSE */}
-            <fieldset className="mt-2">
-              <legend className={classes["options-legend"]}>
+            <fieldset className="mt-2 relative">
+              {optValidations["mainCourse"] && (
+                <div className="absolute -right-4 text-red-500">
+                  * 必須要選擇一樣主食
+                </div>
+              )}
+              <legend
+                className={classes["options-legend"]}
+                onClick={() => setTabMainCourse((prevState) => !prevState)}
+              >
                 {DUMMY_DATA.mainCourse.header}
               </legend>
 
-              <div className="flex flex-col border border-black">
+              <div
+                className={classNames(
+                  "flex flex-col border border-black overflow-hidden",
+                  tabMainCourse ? "h-full" : "h-0",
+                )}
+              >
                 {DUMMY_DATA.mainCourse.options.map((option, index) => {
                   return (
                     <div key={`mainCourse-${index}`}>
