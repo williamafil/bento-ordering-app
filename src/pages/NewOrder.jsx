@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import DUMMY_DATA from "../data/dummy-data";
 import classes from "./NewOrder.module.css";
 import classNames from "../utils/classNames";
+import firebase from "../utils/firebase";
+import "firebase/compat/firestore";
 
 const NewOrder = () => {
   const [mainCourse, setMainCourse] = useState({});
@@ -21,6 +23,26 @@ const NewOrder = () => {
     nuts: null,
   });
   const [tabMainCourse, setTabMainCourse] = useState(true);
+
+  useEffect(() => {
+    firebase
+      .firestore()
+      .collection("restaurantMenu")
+      .get()
+      .then((res) => {
+        // console.log(res.docs[0].id);
+        // const data = res.docs.map((doc) => {
+        //   return doc.data();
+        // });
+
+        const data = res.docs.reduce((accumulator, current) => {
+          accumulator[current.id] = current.data();
+          return accumulator;
+        }, {});
+
+        console.log("data: ", data);
+      });
+  }, []);
 
   useEffect(() => {
     setCurrentTotal(mainCoursePrice + veggiePrice);
