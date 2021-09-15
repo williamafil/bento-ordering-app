@@ -7,7 +7,8 @@ import Fieldset from "../components/UI/Form/Fieldset";
 import Legend from "../components/UI/Form/Legend";
 import Loading from "../components/UI/Layout/Loading";
 import Input from "../components/UI/Form/Input";
-import AsideCard from "../components/UI/AsideCard";
+import AsideCard from "../components/UI/Card/AsideCard";
+import Button from "../components/UI/Button/Button";
 
 const USER_SELECT = "USER_SELECT";
 const INITIALIZE_CHECKS = "INITIALIZE_CHECKS";
@@ -41,19 +42,31 @@ const starchReducer = (state, action) => {
   switch (action.type) {
     case USER_SELECT:
       const newCopy = [...state.selected];
+
       let subtotal = state.subtotal;
 
       if (action.payload.checked) {
         newCopy[action.payload.index].checked = true;
-        const prevTotalChecks = state.selected.filter(
+
+        const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
-        if (prevTotalChecks > 1) {
+
+        if (currentTotalChecks > 1) {
+          console.log(typeof newCopy[action.payload.index].price);
           subtotal += newCopy[action.payload.index].price;
         }
       } else {
         newCopy[action.payload.index].checked = false;
-        subtotal -= newCopy[action.payload.index].price;
+        const currentTotalChecks = newCopy.filter(
+          (item) => item.checked,
+        ).length;
+
+        if (currentTotalChecks >= 1) {
+          subtotal -= newCopy[action.payload.index].price;
+        } else {
+          subtotal = 0;
+        }
       }
 
       return {
@@ -72,19 +85,31 @@ const veggieReducer = (state, action) => {
   switch (action.type) {
     case USER_SELECT:
       const newCopy = [...state.selected];
+
       let subtotal = state.subtotal;
 
       if (action.payload.checked) {
         newCopy[action.payload.index].checked = true;
-        const prevTotalChecks = state.selected.filter(
+
+        const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
-        if (prevTotalChecks > 7) {
+
+        if (currentTotalChecks > 7) {
+          console.log(typeof newCopy[action.payload.index].price);
           subtotal += newCopy[action.payload.index].price;
         }
       } else {
         newCopy[action.payload.index].checked = false;
-        subtotal -= newCopy[action.payload.index].price;
+        const currentTotalChecks = newCopy.filter(
+          (item) => item.checked,
+        ).length;
+
+        if (currentTotalChecks >= 7) {
+          subtotal -= newCopy[action.payload.index].price;
+        } else {
+          subtotal = 0;
+        }
       }
 
       return {
@@ -103,19 +128,31 @@ const nutsReducer = (state, action) => {
   switch (action.type) {
     case USER_SELECT:
       const newCopy = [...state.selected];
+
       let subtotal = state.subtotal;
 
       if (action.payload.checked) {
         newCopy[action.payload.index].checked = true;
-        const prevTotalChecks = state.selected.filter(
+
+        const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
-        if (prevTotalChecks > 1) {
+
+        if (currentTotalChecks > 1) {
+          console.log(typeof newCopy[action.payload.index].price);
           subtotal += newCopy[action.payload.index].price;
         }
       } else {
         newCopy[action.payload.index].checked = false;
-        subtotal -= newCopy[action.payload.index].price;
+        const currentTotalChecks = newCopy.filter(
+          (item) => item.checked,
+        ).length;
+
+        if (currentTotalChecks >= 1) {
+          subtotal -= newCopy[action.payload.index].price;
+        } else {
+          subtotal = 0;
+        }
       }
 
       return {
@@ -135,6 +172,7 @@ const NewOrder = () => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [bentoPrice, setBentoPrice] = useState(0);
+  const [formIsValid, setFormIsValid] = useState(false);
 
   // ::: useReducer
   const [mainCourse, dispatchMainCourse] = useReducer(mainCourseReducer, {
@@ -164,6 +202,12 @@ const NewOrder = () => {
     subtotal: 0,
   });
 
+  const { isValid: mainCourseIsValid } = mainCourse;
+  const { isValid: sauceIsValid } = sauce;
+  const { isValid: starchIsValid } = starch;
+  const { isValid: veggieIsValid } = veggie;
+  const { isValid: nutsIsValid } = nuts;
+
   // ::: Fetch data from firebase
   useEffect(() => {
     firebase
@@ -191,8 +235,38 @@ const NewOrder = () => {
     let total = 0;
     total =
       mainCourse.subtotal + starch.subtotal + veggie.subtotal + nuts.subtotal;
-    setBentoPrice(total);
-  }, [mainCourse.subtotal, starch.subtotal, veggie.subtotal, nuts.subtotal]);
+    setBentoPrice((prevState) => {
+      console.log("prev total: ", prevState);
+      return total;
+    });
+  }, [mainCourse, sauce, starch, veggie, nuts]);
+
+  // ::: check form validity
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      console.log("check form validity");
+
+      // setFormIsValid(emailState.isValid && passwordState.isValid);
+      setFormIsValid(
+        mainCourseIsValid &&
+          sauceIsValid &&
+          starchIsValid &&
+          veggieIsValid &&
+          nutsIsValid,
+      );
+    }, 500);
+
+    return () => {
+      console.log("CLEAN UP");
+      clearTimeout(timer);
+    };
+  }, [
+    mainCourseIsValid,
+    sauceIsValid,
+    starchIsValid,
+    veggieIsValid,
+    nutsIsValid,
+  ]);
 
   // ::: Set default array with extra checked: boolean in each obj,
   // ::: for controlled checkboxs
@@ -401,6 +475,15 @@ const NewOrder = () => {
                 })}
               </div>
             </Fieldset>
+
+            <div className="space-x-4">
+              <Button
+                type="submit"
+                value="加入此便當"
+                className="mt-4 px-6 py-2 border border-black"
+                disabled={!formIsValid}
+              />
+            </div>
           </form>
         </section>
 
