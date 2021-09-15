@@ -284,8 +284,6 @@ const NewOrder = () => {
   // ::: check form validity
   useEffect(() => {
     const timer = setTimeout(() => {
-      console.log("check form validity");
-
       // setFormIsValid(emailState.isValid && passwordState.isValid);
       setFormIsValid(
         mainCourseIsValid &&
@@ -297,7 +295,6 @@ const NewOrder = () => {
     }, 500);
 
     return () => {
-      console.log("CLEAN UP");
       clearTimeout(timer);
     };
   }, [
@@ -656,6 +653,19 @@ const NewOrder = () => {
                 <b>便當價格： $ {bentoPrice}</b>
               </li>
             </ul>
+          </AsideCard>
+
+          <AsideCard label="購物籃">
+            <ol className="space-y-2">
+              {cart.map((item) => {
+                return (
+                  <li className="bg-gray-100 p-2 flex justify-between">
+                    <span>{item.mainCourse.name}</span>
+                    <span>${item.price}</span>
+                  </li>
+                );
+              })}
+            </ol>
           </AsideCard>
         </aside>
       </div>
