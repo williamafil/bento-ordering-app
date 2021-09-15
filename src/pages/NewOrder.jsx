@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer } from "react";
+import React, { useState, useEffect, useReducer, useRef } from "react";
 import classes from "./NewOrder.module.css";
 import clxs from "../utils/clxs";
 import firebase from "../utils/firebase";
@@ -12,6 +12,7 @@ import Button from "../components/UI/Button/Button";
 
 const USER_SELECT = "USER_SELECT";
 const INITIALIZE_CHECKS = "INITIALIZE_CHECKS";
+const RESET_FORM = "RESET_FORM";
 
 const mainCourseReducer = (state, action) => {
   switch (action.type) {
@@ -20,6 +21,12 @@ const mainCourseReducer = (state, action) => {
         selected: parseInt(action.payload.index),
         isValid: true,
         subtotal: parseInt(action.payload.price),
+      };
+    case RESET_FORM:
+      return {
+        selected: "",
+        isValid: null,
+        subtotal: 0,
       };
     default:
       return state;
@@ -32,6 +39,11 @@ const sauceReducer = (state, action) => {
       return {
         selected: parseInt(action.payload),
         isValid: true,
+      };
+    case RESET_FORM:
+      return {
+        selected: "",
+        isValid: null,
       };
     default:
       return state;
@@ -76,6 +88,14 @@ const starchReducer = (state, action) => {
       };
     case INITIALIZE_CHECKS:
       return { ...state, selected: action.payload };
+    case RESET_FORM:
+      return {
+        selected: state.selected.map((item) => {
+          return { ...item, checked: false };
+        }),
+        isValid: null,
+        subtotal: 0,
+      };
     default:
       return state;
   }
@@ -86,7 +106,7 @@ const veggieReducer = (state, action) => {
     case USER_SELECT:
       const newCopy = [...state.selected];
 
-      let subtotal = state.subtotal;
+      let subtotal = parseInt(state.subtotal);
 
       if (action.payload.checked) {
         newCopy[action.payload.index].checked = true;
@@ -98,6 +118,8 @@ const veggieReducer = (state, action) => {
         if (currentTotalChecks > 7) {
           console.log(typeof newCopy[action.payload.index].price);
           subtotal += newCopy[action.payload.index].price;
+        } else {
+          subtotal = 0;
         }
       } else {
         newCopy[action.payload.index].checked = false;
@@ -119,6 +141,14 @@ const veggieReducer = (state, action) => {
       };
     case INITIALIZE_CHECKS:
       return { ...state, selected: action.payload };
+    case RESET_FORM:
+      return {
+        selected: state.selected.map((item) => {
+          return { ...item, checked: false };
+        }),
+        isValid: null,
+        subtotal: 0,
+      };
     default:
       return state;
   }
@@ -162,12 +192,22 @@ const nutsReducer = (state, action) => {
       };
     case INITIALIZE_CHECKS:
       return { ...state, selected: action.payload };
+    case RESET_FORM:
+      return {
+        selected: state.selected.map((item) => {
+          return { ...item, checked: false };
+        }),
+        isValid: null,
+        subtotal: 0,
+      };
     default:
       return state;
   }
 };
 
 const NewOrder = () => {
+  const formRef = useRef();
+  const [cart, setCart] = useState([]);
   const [menu, setMenu] = useState({});
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -345,6 +385,58 @@ const NewOrder = () => {
     }
   };
 
+  const onSubmitHandler = (event) => {
+    event.preventDefault();
+
+    const bento = {
+      mainCourse: {
+        ...menu.mainCourse.options[mainCourse.selected],
+        index: mainCourse.selected,
+      },
+      sauce: {
+        ...menu.sauce.options[sauce.selected],
+        index: sauce.selected,
+      },
+      starch: {
+        selected: starch.selected.filter((item) => item.checked),
+        subtotal: starch.subtotal,
+      },
+      veggie: {
+        selected: veggie.selected.filter((item) => item.checked),
+        subtotal: veggie.subtotal,
+      },
+      nuts: {
+        selected: nuts.selected.filter((item) => item.checked),
+        subtotal: nuts.subtotal,
+      },
+      price: bentoPrice,
+    };
+
+    console.log(bento);
+    setCart((prevState) => {
+      return [...prevState, bento];
+    });
+
+    // RESET STATES
+    dispatchMainCourse({
+      type: RESET_FORM,
+    });
+    dispatchSauce({
+      type: RESET_FORM,
+    });
+    dispatchStarch({
+      type: RESET_FORM,
+    });
+    dispatchVeggie({
+      type: RESET_FORM,
+    });
+    dispatchNuts({
+      type: RESET_FORM,
+    });
+
+    formRef.current.reset();
+  };
+
   return isLoading ? (
     <Loading />
   ) : (
@@ -353,7 +445,7 @@ const NewOrder = () => {
 
       <div className="flex">
         <section className="w-8/12">
-          <form>
+          <form ref={formRef} onSubmit={onSubmitHandler}>
             {/* ::: MAIN COURSE */}
             <Fieldset>
               <Legend
