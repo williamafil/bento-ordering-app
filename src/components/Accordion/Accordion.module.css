@@ -1,0 +1,19 @@
+.item-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-in-out .1s;
+}
+
+.item-icon {
+  transition: all cubic-bezier(0.79, 0.22, 0.75, 0.6) 0.3s;
+}
+
+input[type="checkbox"]:checked ~ .item-content {
+  max-height: 300px;
+}
+input[type="checkbox"]:checked ~ label .item-icon {
+  transform: rotate(225deg);
+}
+input[type="checkbox"]:checked ~ label .item-title::after {
+  width: 100%;
+}

@@ -9,6 +9,10 @@ import Loading from "../components/UI/Layout/Loading";
 import Input from "../components/UI/Form/Input";
 import AsideCard from "../components/UI/Card/AsideCard";
 import Button from "../components/UI/Button/Button";
+import {
+  AccordionGroup,
+  AccordionItem,
+} from "../components/Accordion/Accordion";
 
 const USER_SELECT = "USER_SELECT";
 const INITIALIZE_CHECKS = "INITIALIZE_CHECKS";
@@ -335,6 +339,7 @@ const NewOrder = () => {
     }
   }, [isLoading]);
 
+  // ::: HANDLERS
   const onChangeRadioHandler = (event) => {
     switch (event.target.name) {
       case "mainCourse":
@@ -667,6 +672,12 @@ const NewOrder = () => {
               })}
             </ol>
           </AsideCard>
+
+          <AccordionGroup legend="購物籃" name="accordion">
+            <AccordionItem id="item-1" value="one" label="蔬食便當" />
+            <AccordionItem id="item-2" value="two" label="雞排便當" />
+            <AccordionItem id="item-3" value="three" label="豬排便當" />
+          </AccordionGroup>
         </aside>
       </div>
     </main>
