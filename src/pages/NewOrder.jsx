@@ -280,7 +280,6 @@ const NewOrder = () => {
     total =
       mainCourse.subtotal + starch.subtotal + veggie.subtotal + nuts.subtotal;
     setBentoPrice((prevState) => {
-      console.log("prev total: ", prevState);
       return total;
     });
   }, [mainCourse, sauce, starch, veggie, nuts]);
@@ -660,23 +659,20 @@ const NewOrder = () => {
             </ul>
           </AsideCard>
 
-          <AsideCard label="購物籃">
-            <ol className="space-y-2">
-              {cart.map((item) => {
+          <AccordionGroup legend="購物籃" name="accordion">
+            {cart &&
+              cart.map((item, index) => {
                 return (
-                  <li className="bg-gray-100 p-2 flex justify-between">
-                    <span>{item.mainCourse.name}</span>
-                    <span>${item.price}</span>
-                  </li>
+                  <AccordionItem
+                    key={`item-${index}`}
+                    id={`item-${index}`}
+                    value={item.mainCourse.name}
+                    label={item.mainCourse.name}
+                    price={item.mainCourse.price}
+                    item={item}
+                  />
                 );
               })}
-            </ol>
-          </AsideCard>
-
-          <AccordionGroup legend="購物籃" name="accordion">
-            <AccordionItem id="item-1" value="one" label="蔬食便當" />
-            <AccordionItem id="item-2" value="two" label="雞排便當" />
-            <AccordionItem id="item-3" value="three" label="豬排便當" />
           </AccordionGroup>
         </aside>
       </div>

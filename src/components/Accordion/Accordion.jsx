@@ -12,6 +12,7 @@ export const AccordionGroup = ({ children, name, legend }) => {
         </legend>
 
         <div className="border border-black p-3 space-y-2">
+          {children.length === 0 && <p>Empty</p>}
           {Children.map(children, (child) => cloneElement(child, { name }))}
         </div>
       </fieldset>
@@ -25,31 +26,53 @@ export const AccordionItem = ({
   name,
   value,
   label,
+  price,
+  item,
 }) => {
   return (
     <div className={clxs("bg-gray-100 py-1 px-2")}>
-      <input type={type} id={id} name={name} value={value} className="sr-only" />
+      <input
+        type={type}
+        id={id}
+        name={name}
+        value={value}
+        className="sr-only"
+      />
 
-      <label htmlFor={id} className="flex justify-between items-center ">
-        <span>{label}</span>
+      <label
+        htmlFor={id}
+        className="flex justify-between items-center cursor-pointer"
+      >
+        <span>
+          {label} <b className="text-xs italic">${price}</b>
+        </span>
         <Icons.Plus
           className={clxs(classes["item-icon"], "text-gray-700 h-6 w-6")}
         />
       </label>
 
       <div className={classes["item-content"]}>
-        <ul>
-          <li>a</li>
-          <li>b</li>
-          <li>c</li>
-          <li>3</li>
-          <li>4</li>
-          <li>5</li>
-          <li>6</li>
-          <li>7</li>
-          <li>8</li>
-          <li>9</li>
-          <li>0</li>
+        <ul className="text-xs font-medium mt-2">
+          <li>醬料</li>
+          <li className="pl-2 font-light">{item.sauce.name}</li>
+          <li>澱粉類</li>
+          <li className="pl-2 font-light">
+            {item.starch.selected.map((x, i) => (
+              <span key={`st-${i}`}>{x.name}, </span>
+            ))}
+          </li>
+          <li>蔬果類</li>
+          <li className="pl-2 font-light">
+            {item.veggie.selected.map((x, i) => (
+              <span key={`vg-${i}`}>{x.name}, </span>
+            ))}
+          </li>
+          <li>堅果類</li>
+          <li className="pl-2 font-light">
+            {item.nuts.selected.map((x, i) => (
+              <span key={`nt-${i}`}>{x.name}, </span>
+            ))}
+          </li>
         </ul>
       </div>
     </div>
