@@ -668,7 +668,7 @@ const NewOrder = () => {
                     id={`item-${index}`}
                     value={item.mainCourse.name}
                     label={item.mainCourse.name}
-                    price={item.mainCourse.price}
+                    price={item.price}
                     item={item}
                   />
                 );
