@@ -1,14 +1,22 @@
-import React, { useState, useEffect, useReducer, useRef } from "react";
+import React, {
+  Fragment,
+  useState,
+  useEffect,
+  useReducer,
+  useRef,
+} from "react";
 import classes from "./NewOrder.module.css";
 import clxs from "../utils/clxs";
 import firebase from "../utils/firebase";
 import "firebase/compat/firestore";
+import "firebase/compat/database";
 import Fieldset from "../components/UI/Form/Fieldset";
 import Legend from "../components/UI/Form/Legend";
 import Loading from "../components/UI/Layout/Loading";
 import Input from "../components/UI/Form/Input";
 import AsideCard from "../components/UI/Card/AsideCard";
 import Button from "../components/UI/Button/Button";
+import ContactForm from "../components/ContactForm";
 import {
   AccordionGroup,
   AccordionItem,
@@ -94,9 +102,12 @@ const starchReducer = (state, action) => {
       return { ...state, selected: action.payload };
     case RESET_FORM:
       return {
-        selected: state.selected.map((item) => {
-          return { ...item, checked: false };
-        }),
+        ...action.payload,
+        selected: [
+          ...state.selected.map((item) => {
+            return { ...item, checked: false };
+          }),
+        ],
         isValid: null,
         subtotal: 0,
       };
@@ -217,8 +228,13 @@ const NewOrder = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [bentoPrice, setBentoPrice] = useState(0);
   const [formIsValid, setFormIsValid] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const [contactName, setContactName] = useState("");
+  const [contactNumber, setContactNumber] = useState("");
+  const [contactNote, setContactNote] = useState("");
+  const [contactFormIsValid, setContactFormIsValid] = useState(false);
 
-  // ::: useReducer
+  // DESC: useReducer
   const [mainCourse, dispatchMainCourse] = useReducer(mainCourseReducer, {
     selected: "",
     isValid: null,
@@ -252,7 +268,7 @@ const NewOrder = () => {
   const { isValid: veggieIsValid } = veggie;
   const { isValid: nutsIsValid } = nuts;
 
-  // ::: Fetch data from firebase
+  // DESC: Fetching Data From Firebase
   useEffect(() => {
     firebase
       .firestore()
@@ -274,7 +290,7 @@ const NewOrder = () => {
       });
   }, []);
 
-  // ::: calculate bento price
+  // DESC: Bento Price Calculation
   useEffect(() => {
     let total = 0;
     total =
@@ -284,7 +300,7 @@ const NewOrder = () => {
     });
   }, [mainCourse, sauce, starch, veggie, nuts]);
 
-  // ::: check form validity
+  // DESC: Bento Form Validation
   useEffect(() => {
     const timer = setTimeout(() => {
       // setFormIsValid(emailState.isValid && passwordState.isValid);
@@ -308,8 +324,19 @@ const NewOrder = () => {
     nutsIsValid,
   ]);
 
-  // ::: Set default array with extra checked: boolean in each obj,
-  // ::: for controlled checkboxs
+  // DESC: Contact Form Validation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      // setFormIsValid(emailState.isValid && passwordState.isValid);
+      setContactFormIsValid(contactName.trim() && contactNumber.trim());
+    }, 500);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [contactName, contactNumber]);
+
+  // DESC: Set new array with extra checked property
   useEffect(() => {
     if (!isLoading) {
       const initializeStarchChecks = menu.starch.options.map((item, index) => {
@@ -338,7 +365,7 @@ const NewOrder = () => {
     }
   }, [isLoading]);
 
-  // ::: HANDLERS
+  // DESC: Handler Functions
   const onChangeRadioHandler = (event) => {
     switch (event.target.name) {
       case "mainCourse":
@@ -387,6 +414,7 @@ const NewOrder = () => {
   };
 
   const onSubmitHandler = (event) => {
+    console.log("onSubmit triggered");
     event.preventDefault();
 
     const bento = {
@@ -427,6 +455,7 @@ const NewOrder = () => {
     });
     dispatchStarch({
       type: RESET_FORM,
+      payload: starch,
     });
     dispatchVeggie({
       type: RESET_FORM,
@@ -435,248 +464,332 @@ const NewOrder = () => {
       type: RESET_FORM,
     });
 
-    formRef.current.reset();
+    // formRef.current.reset();
+  };
+
+  const showModalHandler = () => {
+    setShowModal(true);
+  };
+
+  const hideModalHandler = () => {
+    console.log("close");
+    setShowModal(false);
+  };
+
+  const inputChangeHandler = (event) => {
+    console.log(event.target.name);
+    switch (event.target.name) {
+      case "contact-name":
+        setContactName(event.target.value);
+        break;
+      case "contact-number":
+        setContactNumber(event.target.value);
+        break;
+      case "contact-note":
+        setContactNote(event.target.value);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const onCheckoutHandler = (event) => {
+    event.preventDefault();
+
+    const ordersRef = firebase.database().ref("Orders");
+    const order = {
+      bentos: [...cart],
+      name: contactName,
+      phone: contactNumber,
+      notes: contactNote,
+      status: "pending",
+    };
+
+    ordersRef
+      .push(order)
+      .then((res) => {
+        console.log("order sent successfully");
+        setContactFormIsValid(false);
+        setContactName("");
+        setContactNumber("");
+        setContactNote("");
+        setShowModal(false);
+      })
+      .catch((error) => {
+        console.log("something went wrong: ", error);
+      });
   };
 
   return isLoading ? (
     <Loading />
   ) : (
-    <main className="container mx-auto py-4">
-      <h2 className="text-center text-xl font-semibold">建立訂單</h2>
+    <Fragment>
+      {showModal && (
+        <ContactForm
+          formIsValid={contactFormIsValid}
+          contactName={contactName}
+          contactNumber={contactNumber}
+          contactNote={contactNote}
+          onInputHandler={inputChangeHandler}
+          onHideModalHandler={hideModalHandler}
+          onCheckoutOrder={onCheckoutHandler}
+        />
+      )}
+      <main className="container mx-auto py-4">
+        <h2 className="text-center text-xl font-semibold">建立訂單</h2>
 
-      <div className="flex">
-        <section className="w-8/12">
-          <form ref={formRef} onSubmit={onSubmitHandler}>
-            {/* ::: MAIN COURSE */}
-            <Fieldset>
-              <Legend
-                header={menu.mainCourse.header}
-                error={mainCourse.isValid}
-              />
+        <div className="flex">
+          <section className="w-8/12">
+            <form ref={formRef} onSubmit={onSubmitHandler}>
+              {/* ::: MAIN COURSE */}
+              <Fieldset>
+                <Legend
+                  header={menu.mainCourse.header}
+                  error={mainCourse.isValid}
+                />
 
-              <div className="flex flex-col border border-black">
-                {menu.mainCourse.options.map((item, index) => {
+                <div className="flex flex-col border border-black">
+                  {menu.mainCourse.options.map((item, index) => {
+                    return (
+                      <div key={`mainCourse-${index}`}>
+                        <Input
+                          id={`mainCourse-${index}`}
+                          type="radio"
+                          name="mainCourse"
+                          value={index}
+                          className="m-4"
+                          onChange={onChangeRadioHandler}
+                          checked={mainCourse.selected === index}
+                          defaultChecked={mainCourse.selected === index}
+                        />
+                        <label htmlFor={`mainCourse-${index}`}>
+                          {item.name} <b>${item.price}</b>
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Fieldset>
+
+              {/* ::: SAUCE */}
+              <Fieldset>
+                <Legend header={menu.sauce.header} error={sauce.isValid} />
+
+                <div className="flex flex-col border border-black">
+                  {menu.sauce.options.map((item, index) => {
+                    return (
+                      <div key={`sauce-${index}`}>
+                        <Input
+                          id={`sauce-${index}`}
+                          type="radio"
+                          name="sauce"
+                          value={index}
+                          className="m-4"
+                          onChange={onChangeRadioHandler}
+                          checked={sauce.selected === index}
+                        />
+                        <label htmlFor={`sauce-${index}`}>{item.name}</label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Fieldset>
+
+              {/* ::: STARCH */}
+              <Fieldset>
+                <Legend header={menu.starch.header} error={starch.isValid} />
+                <div className="flex flex-wrap border border-black">
+                  {starch.selected.map((item, index) => {
+                    return (
+                      <div key={`starch-${index}`}>
+                        <Input
+                          id={`starch-${index}`}
+                          type="checkbox"
+                          name="starch"
+                          value={index}
+                          className="m-4"
+                          onChange={onChangeCheckboxHandler}
+                          checked={item.checked}
+                        />
+                        <label htmlFor={`starch-${index}`}>{item.name}</label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Fieldset>
+
+              {/* ::: VEGGIE */}
+              <Fieldset>
+                <Legend header={menu.veggie.header} error={veggie.isValid} />
+                <div className="flex flex-wrap border border-black">
+                  {veggie.selected.map((item, index) => {
+                    return (
+                      <div key={`veggie-${index}`}>
+                        <Input
+                          id={`veggie-${index}`}
+                          type="checkbox"
+                          name="veggie"
+                          value={index}
+                          className="m-4"
+                          onChange={onChangeCheckboxHandler}
+                          checked={item.checked}
+                        />
+                        <label htmlFor={`veggie-${index}`}>{item.name}</label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Fieldset>
+
+              {/* ::: NUTS */}
+              <Fieldset>
+                <Legend header={menu.nuts.header} error={nuts.isValid} />
+                <div className="flex flex-wrap border border-black">
+                  {nuts.selected.map((item, index) => {
+                    return (
+                      <div key={`nuts-${index}`}>
+                        <Input
+                          id={`nuts-${index}`}
+                          type="checkbox"
+                          name="nuts"
+                          value={index}
+                          className="m-4"
+                          onChange={onChangeCheckboxHandler}
+                          checked={item.checked}
+                        />
+                        <label htmlFor={`nuts-${index}`}>{item.name}</label>
+                      </div>
+                    );
+                  })}
+                </div>
+              </Fieldset>
+
+              <div className="space-x-4">
+                <Button
+                  type="submit"
+                  value="加入此便當"
+                  className={clxs(
+                    "mt-4 px-6 py-2 border border-black",
+                    !formIsValid &&
+                      "cursor-not-allowed text-gray-300 border-gray-300 bg-gray-100",
+                  )}
+                  disabled={!formIsValid}
+                />
+              </div>
+            </form>
+          </section>
+
+          <aside className="w-4/12 pl-2 mt-2">
+            <AsideCard label="配置便當">
+              <ul>
+                <li>
+                  <b>主食：</b>
+                  {mainCourse.isValid && (
+                    <>
+                      {menu.mainCourse.options[mainCourse.selected].name} - $
+                      {menu.mainCourse.options[mainCourse.selected].price}
+                    </>
+                  )}
+                </li>
+                <li>
+                  <b>醬汁：</b>
+                  {sauce.isValid && menu.sauce.options[sauce.selected].name}
+                </li>
+                <li>
+                  <b>澱粉類：</b>
+                  <ul className="ml-8">
+                    {starch.selected
+                      .filter((item) => item.checked)
+                      .map((item, index) => (
+                        <li
+                          className={clxs(
+                            "list-decimal",
+                            index >= 1 && "text-red-500",
+                          )}
+                          key={`${item.id}-${Math.random()}`}
+                        >
+                          {item.name}
+                          {index >= 1 && <> - ${item.price}</>}
+                        </li>
+                      ))}
+                  </ul>
+                </li>
+                <li>
+                  <b>蔬果類：</b>
+                  <ul className="ml-8">
+                    {veggie.selected
+                      .filter((item) => item.checked)
+                      .map((item, index) => (
+                        <li
+                          className={clxs(
+                            "list-decimal",
+                            index >= 7 && "text-red-500",
+                          )}
+                          key={`${item.id}-checkedStarch`}
+                        >
+                          {item.name}
+                          {index >= 7 && <> - ${item.price}</>}
+                        </li>
+                      ))}
+                  </ul>
+                </li>
+                <li>
+                  <b>堅果：</b>
+                  <ul className="ml-8">
+                    {nuts.selected
+                      .filter((item) => item.checked)
+                      .map((item, index) => (
+                        <li
+                          className={clxs(
+                            "list-decimal",
+                            index >= 1 && "text-red-500",
+                          )}
+                          key={`${item.id}-checkedStarch`}
+                        >
+                          {item.name}
+                          {index >= 1 && <> - ${item.price}</>}
+                        </li>
+                      ))}
+                  </ul>
+                </li>
+                <li className="bg-gray-100 p-2">
+                  <b>便當價格： $ {bentoPrice}</b>
+                </li>
+              </ul>
+            </AsideCard>
+
+            <AccordionGroup legend="購物籃" name="accordion">
+              {cart &&
+                cart.map((item, index) => {
                   return (
-                    <div key={`mainCourse-${index}`}>
-                      <Input
-                        id={`mainCourse-${index}`}
-                        type="radio"
-                        name="mainCourse"
-                        value={index}
-                        className="m-4"
-                        onChange={onChangeRadioHandler}
-                        checked={mainCourse.selected === index}
-                      />
-                      <label htmlFor={`mainCourse-${index}`}>
-                        {item.name} <b>${item.price}</b>
-                      </label>
-                    </div>
+                    <AccordionItem
+                      key={`item-${index}`}
+                      id={`item-${index}`}
+                      value={item.mainCourse.name}
+                      label={item.mainCourse.name}
+                      price={item.price}
+                      item={item}
+                    />
                   );
                 })}
-              </div>
-            </Fieldset>
-
-            {/* ::: SAUCE */}
-            <Fieldset>
-              <Legend header={menu.sauce.header} error={sauce.isValid} />
-
-              <div className="flex flex-col border border-black">
-                {menu.sauce.options.map((item, index) => {
-                  return (
-                    <div key={`sauce-${index}`}>
-                      <Input
-                        id={`sauce-${index}`}
-                        type="radio"
-                        name="sauce"
-                        value={index}
-                        className="m-4"
-                        onChange={onChangeRadioHandler}
-                        checked={sauce.selected === index}
-                      />
-                      <label htmlFor={`sauce-${index}`}>{item.name}</label>
-                    </div>
-                  );
-                })}
-              </div>
-            </Fieldset>
-
-            {/* ::: STARCH */}
-            <Fieldset>
-              <Legend header={menu.starch.header} error={starch.isValid} />
-              <div className="flex flex-wrap border border-black">
-                {starch.selected.map((item, index) => {
-                  return (
-                    <div key={`starch-${index}`}>
-                      <Input
-                        id={`starch-${index}`}
-                        type="checkbox"
-                        name="starch"
-                        value={index}
-                        className="m-4"
-                        onChange={onChangeCheckboxHandler}
-                        check={item.checked}
-                      />
-                      <label htmlFor={`starch-${index}`}>{item.name}</label>
-                    </div>
-                  );
-                })}
-              </div>
-            </Fieldset>
-
-            {/* ::: VEGGIE */}
-            <Fieldset>
-              <Legend header={menu.veggie.header} error={veggie.isValid} />
-              <div className="flex flex-wrap border border-black">
-                {veggie.selected.map((item, index) => {
-                  return (
-                    <div key={`veggie-${index}`}>
-                      <Input
-                        id={`veggie-${index}`}
-                        type="checkbox"
-                        name="veggie"
-                        value={index}
-                        className="m-4"
-                        onChange={onChangeCheckboxHandler}
-                        check={item.checked}
-                      />
-                      <label htmlFor={`veggie-${index}`}>{item.name}</label>
-                    </div>
-                  );
-                })}
-              </div>
-            </Fieldset>
-
-            {/* ::: NUTS */}
-            <Fieldset>
-              <Legend header={menu.nuts.header} error={nuts.isValid} />
-              <div className="flex flex-wrap border border-black">
-                {nuts.selected.map((item, index) => {
-                  return (
-                    <div key={`nuts-${index}`}>
-                      <Input
-                        id={`nuts-${index}`}
-                        type="checkbox"
-                        name="nuts"
-                        value={index}
-                        className="m-4"
-                        onChange={onChangeCheckboxHandler}
-                        check={item.checked}
-                      />
-                      <label htmlFor={`nuts-${index}`}>{item.name}</label>
-                    </div>
-                  );
-                })}
-              </div>
-            </Fieldset>
-
-            <div className="space-x-4">
-              <Button
-                type="submit"
-                value="加入此便當"
-                className="mt-4 px-6 py-2 border border-black"
-                disabled={!formIsValid}
-              />
-            </div>
-          </form>
-        </section>
-
-        <aside className="w-4/12 pl-2 mt-2">
-          <AsideCard label="配置便當">
-            <ul>
-              <li>
-                <b>主食：</b>
-                {mainCourse.isValid && (
-                  <>
-                    {menu.mainCourse.options[mainCourse.selected].name} - $
-                    {menu.mainCourse.options[mainCourse.selected].price}
-                  </>
-                )}
-              </li>
-              <li>
-                <b>醬汁：</b>
-                {sauce.isValid && menu.sauce.options[sauce.selected].name}
-              </li>
-              <li>
-                <b>澱粉類：</b>
-                <ul className="ml-8">
-                  {starch.selected
-                    .filter((item) => item.checked)
-                    .map((item, index) => (
-                      <li
-                        className={clxs(
-                          "list-decimal",
-                          index >= 1 && "text-red-500",
-                        )}
-                        key={`${item.id}-checkedStarch`}
-                      >
-                        {item.name}
-                        {index >= 1 && <> - ${item.price}</>}
-                      </li>
-                    ))}
-                </ul>
-              </li>
-              <li>
-                <b>蔬果類：</b>
-                <ul className="ml-8">
-                  {veggie.selected
-                    .filter((item) => item.checked)
-                    .map((item, index) => (
-                      <li
-                        className={clxs(
-                          "list-decimal",
-                          index >= 7 && "text-red-500",
-                        )}
-                        key={`${item.id}-checkedStarch`}
-                      >
-                        {item.name}
-                        {index >= 7 && <> - ${item.price}</>}
-                      </li>
-                    ))}
-                </ul>
-              </li>
-              <li>
-                <b>堅果：</b>
-                <ul className="ml-8">
-                  {nuts.selected
-                    .filter((item) => item.checked)
-                    .map((item, index) => (
-                      <li
-                        className={clxs(
-                          "list-decimal",
-                          index >= 1 && "text-red-500",
-                        )}
-                        key={`${item.id}-checkedStarch`}
-                      >
-                        {item.name}
-                        {index >= 1 && <> - ${item.price}</>}
-                      </li>
-                    ))}
-                </ul>
-              </li>
-              <li className="bg-gray-100 p-2">
-                <b>便當價格： $ {bentoPrice}</b>
-              </li>
-            </ul>
-          </AsideCard>
-
-          <AccordionGroup legend="購物籃" name="accordion">
-            {cart &&
-              cart.map((item, index) => {
-                return (
-                  <AccordionItem
-                    key={`item-${index}`}
-                    id={`item-${index}`}
-                    value={item.mainCourse.name}
-                    label={item.mainCourse.name}
-                    price={item.price}
-                    item={item}
-                  />
-                );
-              })}
-          </AccordionGroup>
-        </aside>
-      </div>
-    </main>
+            </AccordionGroup>
+            <button
+              onClick={showModalHandler}
+              className={clxs(
+                "float-right",
+                "border border-black px-4 py-2",
+                "hover:bg-gray-200",
+                cart.length <= 0 &&
+                  "cursor-not-allowed text-gray-300 border-gray-300 bg-gray-100",
+              )}
+              disabled={cart.length <= 0}
+            >
+              下一步
+            </button>
+          </aside>
+        </div>
+      </main>
+    </Fragment>
   );
 };
 
