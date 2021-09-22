@@ -3,6 +3,8 @@ import Header from "./components/Header/Header";
 import "./App.css";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import NewOrder from "./pages/NewOrder";
+import Menu from "./pages/Menu";
+import Home from "./pages/Home";
 
 function App() {
   return (
@@ -10,9 +12,11 @@ function App() {
       <Header />
       <Switch>
         <Route path="/" exact>
-          首頁
+          <Home />
         </Route>
-        <Route path="/menu">菜單</Route>
+        <Route path="/menu">
+          <Menu />
+        </Route>
         <Route path="/order">
           <NewOrder />
         </Route>

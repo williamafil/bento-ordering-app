@@ -3,11 +3,12 @@ import React, { Fragment } from "react";
 import { Link } from "react-router-dom";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { useLocation } from "react-router-dom";
 
 const navigation = [
-  { name: "Home", href: "/", current: true },
-  { name: "菜單", href: "/menu", current: false },
-  { name: "我要訂餐", href: "/order", current: false },
+  { name: "Home", href: "/" },
+  { name: "菜單", href: "/menu" },
+  { name: "我要訂餐", href: "/order" },
 ];
 
 function classNames(...classes) {
@@ -15,6 +16,8 @@ function classNames(...classes) {
 }
 
 export default function Example() {
+  const { pathname } = useLocation();
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -52,12 +55,14 @@ export default function Example() {
                         key={item.name}
                         href={item.href}
                         className={classNames(
-                          item.current
+                          item.href === pathname
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
                           "px-3 py-2 rounded-md text-sm font-medium",
                         )}
-                        aria-current={item.current ? "page" : undefined}
+                        aria-current={
+                          item.href === pathname ? "page" : undefined
+                        }
                       >
                         {item.name}
                       </a>
@@ -149,12 +154,12 @@ export default function Example() {
                   key={item.name}
                   to={item.href}
                   className={classNames(
-                    item.current
+                    item.href === pathname
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
                     "block px-3 py-2 rounded-md text-base font-medium",
                   )}
-                  aria-current={item.current ? "page" : undefined}
+                  aria-current={item.href === pathname ? "page" : undefined}
                 >
                   {item.name}
                 </Link>

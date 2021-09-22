@@ -1,7 +1,8 @@
 import React from "react";
+import { useLocation } from "react-router-dom";
 
 const Menu = () => {
-  return <div>菜單</div>;
+  return <div>MENU</div>;
 };
 
 export default Menu;
