@@ -67,22 +67,38 @@ const starchReducer = (state, action) => {
   switch (action.type) {
     case USER_SELECT:
       const newCopy = [...state.selected];
-
       let subtotal = state.subtotal;
+      const specialCheckbox = action.payload.isSpecial;
 
       if (action.payload.checked) {
         newCopy[action.payload.index].checked = true;
 
+        if (specialCheckbox) {
+          newCopy.forEach((item) => {
+            if (!item.custom) {
+              item.checked = false;
+              item.disabled = true;
+            }
+          });
+        }
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
-
+        console.log("currentTotalChecks: ", currentTotalChecks);
         if (currentTotalChecks > 1) {
-          console.log(typeof newCopy[action.payload.index].price);
           subtotal += newCopy[action.payload.index].price;
         }
       } else {
         newCopy[action.payload.index].checked = false;
+
+        if (specialCheckbox) {
+          newCopy.forEach((item) => {
+            if (!item.custom) {
+              item.disabled = false;
+            }
+          });
+        }
+
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
@@ -132,7 +148,6 @@ const veggieReducer = (state, action) => {
         ).length;
 
         if (currentTotalChecks > 7) {
-          console.log(typeof newCopy[action.payload.index].price);
           subtotal += newCopy[action.payload.index].price;
         } else {
           subtotal = 0;
@@ -185,7 +200,6 @@ const nutsReducer = (state, action) => {
         ).length;
 
         if (currentTotalChecks > 1) {
-          console.log(typeof newCopy[action.payload.index].price);
           subtotal += newCopy[action.payload.index].price;
         }
       } else {
@@ -351,7 +365,7 @@ const NewOrder = () => {
   useEffect(() => {
     if (!isLoading) {
       const initializeStarchChecks = menu.starch.options.map((item, index) => {
-        return { ...item, id: index, checked: false };
+        return { ...item, id: index, checked: false, disabled: false };
       });
       dispatchStarch({
         type: INITIALIZE_CHECKS,
@@ -400,11 +414,27 @@ const NewOrder = () => {
   };
 
   const onChangeCheckboxHandler = (event) => {
+    console.log(event.target);
     switch (event.target.name) {
       case "starch":
+        const special = event.target.id.split("-")[1] === "special";
+        console.log("checkbox id: ", special);
+        // if (special) {
+        //   dispatchStarch({
+        //     type: DISABLE_OTHER_BOX,
+        //     payload: {
+        //       checked: event.target.checked,
+        //       index: event.target.value,
+        //     },
+        //   });
+        // }
         dispatchStarch({
           type: USER_SELECT,
-          payload: { checked: event.target.checked, index: event.target.value },
+          payload: {
+            isSpecial: special,
+            checked: event.target.checked,
+            index: event.target.value,
+          },
         });
         break;
       case "veggie":
@@ -620,15 +650,25 @@ const NewOrder = () => {
                     return (
                       <div key={`starch-${index}`}>
                         <Input
-                          id={`starch-${index}`}
+                          id={
+                            item.custom ? "starch-special" : `starch-${index}`
+                          }
                           type="checkbox"
                           name="starch"
                           value={index}
                           className="m-4"
                           onChange={onChangeCheckboxHandler}
                           checked={item.checked}
+                          disabled={item.disabled}
+                          custom={item.custom}
                         />
-                        <label htmlFor={`starch-${index}`}>{item.name}</label>
+                        <label
+                          htmlFor={
+                            item.custom ? "starch-special" : `starch-${index}`
+                          }
+                        >
+                          {item.name}
+                        </label>
                       </div>
                     );
                   })}

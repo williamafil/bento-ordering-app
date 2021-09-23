@@ -1,6 +1,16 @@
 import React from "react";
 
-const Input = ({ id, type, name, value, className, onChange, checked }) => {
+const Input = ({
+  id,
+  type,
+  name,
+  value,
+  className,
+  onChange,
+  checked,
+  disabled,
+  custom,
+}) => {
   return (
     <>
       <input
@@ -11,6 +21,8 @@ const Input = ({ id, type, name, value, className, onChange, checked }) => {
         className={className}
         onChange={onChange}
         checked={checked}
+        disabled={disabled}
+        custom={custom?.toString()}
       />
     </>
   );
