@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Header from "./components/Header/Header";
+import Header from "./components/header/Header";
 import "./App.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
 import NewOrder from "./pages/NewOrder";
