@@ -66,6 +66,8 @@ const Header = () => {
                     alt="Workflow"
                   />
                 </div>
+
+                {/* DESC:    Navigation */}
                 <div className="hidden sm:block sm:ml-6">
                   <div className="flex space-x-4">
                     {navigation.map((item) => (
@@ -98,7 +100,7 @@ const Header = () => {
                     <BellIcon className="h-6 w-6" aria-hidden="true" />
                   </button>
 
-                  {/* Profile dropdown */}
+                  {/* DESC:   Admin avatar dropdown */}
                   <Menu as="div" className="ml-3 relative">
                     <div>
                       <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
@@ -122,15 +124,15 @@ const Header = () => {
                       <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <Menu.Item>
                           {({ active }) => (
-                            <a
-                              href="#"
+                            <Link
+                              to="/adm"
                               className={classNames(
                                 active ? "bg-gray-100" : "",
                                 "block px-4 py-2 text-sm text-gray-700",
                               )}
                             >
-                              Your Profile
-                            </a>
+                              Dashboard
+                            </Link>
                           )}
                         </Menu.Item>
                         <Menu.Item>
@@ -168,6 +170,7 @@ const Header = () => {
             </div>
           </div>
 
+          {/* DESC:   Navigation */}
           <Disclosure.Panel className="sm:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (

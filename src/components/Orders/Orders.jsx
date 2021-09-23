@@ -19,33 +19,23 @@ const Orders = () => {
   const [orders, setOrders] = useState([]);
 
   useEffect(() => {
-    const ordersRef = firebase.database().ref("Orders");
-    // console.log("orders ref: ", ordersRef);
-    ordersRef.once("value", (snapshot) => {
-      snapshot.forEach((childSnapshot) => {
-        var childKey = childSnapshot.key;
-        var childData = childSnapshot.val();
+    const ordersRef = firebase.database().ref("/Orders");
+    // ordersRef.once("value", (snapshot) => {
+    //   snapshot.forEach((childSnapshot) => {
+    //     var childKey = childSnapshot.key;
+    //     var childData = childSnapshot.val();
 
-        // console.log("childKey: ", childKey);
-        // console.log("childData: ", childData);
+    //     setOrders((prevState) => {
+    //       return [...prevState, { ...childData, id: childKey }];
+    //     });
+    //   });
+    // });
 
-        setOrders((prevState) => {
-          return [...prevState, { ...childData, id: childKey }];
-        });
+    ordersRef.on("child_added", (data) => {
+      setOrders((prevState) => {
+        return [...prevState, { ...data.val(), id: data.key }];
       });
     });
-    // firebase
-    //   .database()
-    //   .collection("Orders")
-    //   .get()
-    //   .then((collectionSnapshot) => {
-    //     const data = collectionSnapshot.docs.map((docSnapshot) => {
-    //       // const id = docSnapshot.id;
-    //       // return { ...docSnapshot.data(), id };
-    //       return docSnapshot;
-    //     });
-    //     console.log("Orders: ", data);
-    //   });
   }, []);
 
   return (
@@ -85,6 +75,7 @@ const Orders = () => {
                   </th>
                 </tr>
               </thead>
+              {/* DESC:   Orders List    */}
               <tbody className="bg-white divide-y divide-gray-200">
                 {orders?.map((order) => (
                   <tr key={order.id}>
