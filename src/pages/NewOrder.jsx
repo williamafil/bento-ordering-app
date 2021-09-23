@@ -115,7 +115,7 @@ const starchReducer = (state, action) => {
       return {
         selected: newCopy,
         isValid: newCopy.filter((item) => item.checked).length >= 1,
-        subtotal,
+        subtotal: specialCheckbox && action.payload.checked ? 0 : subtotal,
       };
     case INITIALIZE_CHECKS:
       return { ...state, selected: action.payload };
@@ -259,7 +259,7 @@ const nutsReducer = (state, action) => {
       return {
         selected: newCopy,
         isValid: newCopy.filter((item) => item.checked).length >= 1,
-        subtotal,
+        subtotal: specialCheckbox && action.payload.checked ? 0 : subtotal,
       };
     case INITIALIZE_CHECKS:
       return { ...state, selected: action.payload };
