@@ -17,6 +17,7 @@ import Input from "../components/UI/Form/Input";
 import AsideCard from "../components/UI/Card/AsideCard";
 import Button from "../components/UI/Button/Button";
 import ContactForm from "../components/ContactForm";
+import Icons from "../components/Icons";
 import {
   AccordionGroup,
   AccordionItem,
@@ -301,6 +302,7 @@ const NewOrder = () => {
     });
   }, [mainCourse, sauce, starch, veggie, nuts]);
 
+  // DESC: Cart Total Price
   useEffect(() => {
     let total = 0;
     cart.forEach((item) => {
@@ -500,6 +502,12 @@ const NewOrder = () => {
       default:
         break;
     }
+  };
+
+  const onRemoveBentoHandler = (idx) => {
+    console.log("remove: ", idx);
+    const newCart = cart.filter((item, index) => index !== idx);
+    setCart(newCart);
   };
 
   const onCheckoutHandler = (event) => {
@@ -771,18 +779,31 @@ const NewOrder = () => {
               {cart &&
                 cart.map((item, index) => {
                   return (
-                    <AccordionItem
-                      key={`item-${index}`}
-                      id={`item-${index}`}
-                      value={item.mainCourse.name}
-                      label={item.mainCourse.name}
-                      price={item.price}
-                      item={item}
-                    />
+                    <div
+                      key={`cart-bento-${index}`}
+                      className="flex bg-gray-100 px-2 py-1"
+                    >
+                      <div className="flex items-start py-1">
+                        <Icons.Remove
+                          className="w-4 h-4 mr-1 hover:text-red-600 cursor-pointer"
+                          onClickCapture={() => onRemoveBentoHandler(index)}
+                        />
+                      </div>
+
+                      <AccordionItem
+                        key={`item-${index}`}
+                        id={`item-${index}`}
+                        value={item.mainCourse.name}
+                        label={item.mainCourse.name}
+                        price={item.price}
+                        item={item}
+                      />
+                    </div>
                   );
                 })}
-
-              {cart && (
+              {cart.length === 0 ? (
+                <>購物車是空的</>
+              ) : (
                 <div className="bg-gray-100 font-semibold p-2 flex justify-between">
                   <p>總計： </p>
                   <p>$ {cartTotal}</p>

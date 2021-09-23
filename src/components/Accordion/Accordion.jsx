@@ -12,7 +12,7 @@ export const AccordionGroup = ({ children, name, legend }) => {
         </legend>
 
         <div className="border border-black p-3 space-y-2">
-          {children.length === 0 && <p>Empty</p>}
+          {/* {children.length === 0 && <p>Empty</p>} */}
           {Children.map(children, (child) => cloneElement(child, { name }))}
         </div>
       </fieldset>
@@ -30,7 +30,7 @@ export const AccordionItem = ({
   item,
 }) => {
   return (
-    <div className={clxs("bg-gray-100 py-1 px-2")}>
+    <div className={clxs("bg-gray-100")}>
       <input
         type={type}
         id={id}
@@ -43,7 +43,7 @@ export const AccordionItem = ({
         htmlFor={id}
         className="flex justify-between items-center cursor-pointer"
       >
-        <span>
+        <span className="text-sm">
           {label} <b className="text-xs italic">${price}</b>
         </span>
         <Icons.Plus
