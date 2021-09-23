@@ -75,11 +75,13 @@ const starchReducer = (state, action) => {
 
         if (specialCheckbox) {
           newCopy.forEach((item) => {
-            if (!item.custom) {
-              item.checked = false;
-              item.disabled = true;
-            }
+            // if (!item.custom) {
+            item.checked = false;
+            item.disabled = true;
+            // }
           });
+          newCopy[action.payload.index].checked = true;
+          newCopy[action.payload.index].disabled = false;
         }
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
@@ -93,9 +95,9 @@ const starchReducer = (state, action) => {
 
         if (specialCheckbox) {
           newCopy.forEach((item) => {
-            if (!item.custom) {
-              item.disabled = false;
-            }
+            // if (!item.custom) {
+            item.disabled = false;
+            // }
           });
         }
 
@@ -689,7 +691,9 @@ const NewOrder = () => {
                       <div key={`starch-${index}`}>
                         <Input
                           id={
-                            item.custom ? "starch-special" : `starch-${index}`
+                            item.custom
+                              ? `starch${index}-special`
+                              : `starch-${index}`
                           }
                           type="checkbox"
                           name="starch"
@@ -702,7 +706,9 @@ const NewOrder = () => {
                         />
                         <label
                           htmlFor={
-                            item.custom ? "starch-special" : `starch-${index}`
+                            item.custom
+                              ? `starch${index}-special`
+                              : `starch-${index}`
                           }
                         >
                           {item.name}
