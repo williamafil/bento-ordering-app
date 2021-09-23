@@ -137,11 +137,20 @@ const veggieReducer = (state, action) => {
   switch (action.type) {
     case USER_SELECT:
       const newCopy = [...state.selected];
-
       let subtotal = parseInt(state.subtotal);
+      const specialCheckbox = action.payload.isSpecial;
 
       if (action.payload.checked) {
         newCopy[action.payload.index].checked = true;
+
+        if (specialCheckbox) {
+          newCopy.forEach((item) => {
+            if (!item.custom) {
+              item.checked = false;
+              item.disabled = true;
+            }
+          });
+        }
 
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
@@ -154,6 +163,15 @@ const veggieReducer = (state, action) => {
         }
       } else {
         newCopy[action.payload.index].checked = false;
+
+        if (specialCheckbox) {
+          newCopy.forEach((item) => {
+            if (!item.custom) {
+              item.disabled = false;
+            }
+          });
+        }
+
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
@@ -167,7 +185,10 @@ const veggieReducer = (state, action) => {
 
       return {
         selected: newCopy,
-        isValid: newCopy.filter((item) => item.checked).length >= 7,
+        isValid:
+          specialCheckbox && action.payload.checked
+            ? true
+            : newCopy.filter((item) => item.checked).length >= 7,
         subtotal,
       };
     case INITIALIZE_CHECKS:
@@ -189,11 +210,20 @@ const nutsReducer = (state, action) => {
   switch (action.type) {
     case USER_SELECT:
       const newCopy = [...state.selected];
-
       let subtotal = state.subtotal;
+      const specialCheckbox = action.payload.isSpecial;
 
       if (action.payload.checked) {
         newCopy[action.payload.index].checked = true;
+
+        if (specialCheckbox) {
+          newCopy.forEach((item) => {
+            if (!item.custom) {
+              item.checked = false;
+              item.disabled = true;
+            }
+          });
+        }
 
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
@@ -204,6 +234,15 @@ const nutsReducer = (state, action) => {
         }
       } else {
         newCopy[action.payload.index].checked = false;
+
+        if (specialCheckbox) {
+          newCopy.forEach((item) => {
+            if (!item.custom) {
+              item.disabled = false;
+            }
+          });
+        }
+
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
@@ -373,7 +412,7 @@ const NewOrder = () => {
       });
 
       const initializeVeggieChecks = menu.veggie.options.map((item, index) => {
-        return { ...item, id: index, checked: false };
+        return { ...item, id: index, checked: false, disabled: false };
       });
       dispatchVeggie({
         type: INITIALIZE_CHECKS,
@@ -381,7 +420,7 @@ const NewOrder = () => {
       });
 
       const initializeNutsChecks = menu.nuts.options.map((item, index) => {
-        return { ...item, id: index, checked: false };
+        return { ...item, id: index, checked: false, disabled: false };
       });
       dispatchNuts({
         type: INITIALIZE_CHECKS,
@@ -415,19 +454,10 @@ const NewOrder = () => {
 
   const onChangeCheckboxHandler = (event) => {
     console.log(event.target);
+    const special = event.target.id.split("-")[1] === "special";
+    console.log("checkbox id: ", special);
     switch (event.target.name) {
       case "starch":
-        const special = event.target.id.split("-")[1] === "special";
-        console.log("checkbox id: ", special);
-        // if (special) {
-        //   dispatchStarch({
-        //     type: DISABLE_OTHER_BOX,
-        //     payload: {
-        //       checked: event.target.checked,
-        //       index: event.target.value,
-        //     },
-        //   });
-        // }
         dispatchStarch({
           type: USER_SELECT,
           payload: {
@@ -440,13 +470,21 @@ const NewOrder = () => {
       case "veggie":
         dispatchVeggie({
           type: USER_SELECT,
-          payload: { checked: event.target.checked, index: event.target.value },
+          payload: {
+            isSpecial: special,
+            checked: event.target.checked,
+            index: event.target.value,
+          },
         });
         break;
       case "nuts":
         dispatchNuts({
           type: USER_SELECT,
-          payload: { checked: event.target.checked, index: event.target.value },
+          payload: {
+            isSpecial: special,
+            checked: event.target.checked,
+            index: event.target.value,
+          },
         });
         break;
       default:
@@ -683,15 +721,25 @@ const NewOrder = () => {
                     return (
                       <div key={`veggie-${index}`}>
                         <Input
-                          id={`veggie-${index}`}
+                          id={
+                            item.custom ? "veggie-special" : `veggie-${index}`
+                          }
                           type="checkbox"
                           name="veggie"
                           value={index}
                           className="m-4"
                           onChange={onChangeCheckboxHandler}
                           checked={item.checked}
+                          disabled={item.disabled}
+                          custom={item.custom}
                         />
-                        <label htmlFor={`veggie-${index}`}>{item.name}</label>
+                        <label
+                          htmlFor={
+                            item.custom ? "veggie-special" : `veggie-${index}`
+                          }
+                        >
+                          {item.name}
+                        </label>
                       </div>
                     );
                   })}
@@ -706,15 +754,23 @@ const NewOrder = () => {
                     return (
                       <div key={`nuts-${index}`}>
                         <Input
-                          id={`nuts-${index}`}
+                          id={item.custom ? "nuts-special" : `nuts-${index}`}
                           type="checkbox"
                           name="nuts"
                           value={index}
                           className="m-4"
                           onChange={onChangeCheckboxHandler}
                           checked={item.checked}
+                          disabled={item.disabled}
+                          custom={item.custom}
                         />
-                        <label htmlFor={`nuts-${index}`}>{item.name}</label>
+                        <label
+                          htmlFor={
+                            item.custom ? "nuts-special" : `nuts-${index}`
+                          }
+                        >
+                          {item.name}
+                        </label>
                       </div>
                     );
                   })}
