@@ -223,6 +223,7 @@ const nutsReducer = (state, action) => {
 const NewOrder = () => {
   const formRef = useRef();
   const [cart, setCart] = useState([]);
+  const [cartTotal, setCartTotal] = useState(0);
   const [menu, setMenu] = useState({});
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -299,6 +300,14 @@ const NewOrder = () => {
       return total;
     });
   }, [mainCourse, sauce, starch, veggie, nuts]);
+
+  useEffect(() => {
+    let total = 0;
+    cart.forEach((item) => {
+      total += item.price;
+    });
+    setCartTotal(total);
+  }, [cart]);
 
   // DESC: Bento Form Validation
   useEffect(() => {
@@ -441,7 +450,7 @@ const NewOrder = () => {
       price: bentoPrice,
     };
 
-    console.log(bento);
+    // console.log(bento);
     setCart((prevState) => {
       return [...prevState, bento];
     });
@@ -772,6 +781,13 @@ const NewOrder = () => {
                     />
                   );
                 })}
+
+              {cart && (
+                <div className="bg-gray-100 font-semibold p-2 flex justify-between">
+                  <p>總計： </p>
+                  <p>$ {cartTotal}</p>
+                </div>
+              )}
             </AccordionGroup>
             <button
               onClick={showModalHandler}
