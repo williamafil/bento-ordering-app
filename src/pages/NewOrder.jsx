@@ -124,7 +124,7 @@ const starchReducer = (state, action) => {
         ...action.payload,
         selected: [
           ...state.selected.map((item) => {
-            return { ...item, checked: false };
+            return { ...item, checked: false, disabled: false };
           }),
         ],
         isValid: null,
@@ -198,7 +198,7 @@ const veggieReducer = (state, action) => {
     case RESET_FORM:
       return {
         selected: state.selected.map((item) => {
-          return { ...item, checked: false };
+          return { ...item, checked: false, disabled: false };
         }),
         isValid: null,
         subtotal: 0,
@@ -266,7 +266,7 @@ const nutsReducer = (state, action) => {
     case RESET_FORM:
       return {
         selected: state.selected.map((item) => {
-          return { ...item, checked: false };
+          return { ...item, checked: false, disabled: false };
         }),
         isValid: null,
         subtotal: 0,
@@ -595,12 +595,12 @@ const NewOrder = () => {
     ordersRef
       .push(order)
       .then((res) => {
-        console.log("order sent successfully");
         setContactFormIsValid(false);
         setContactName("");
         setContactNumber("");
         setContactNote("");
         setShowModal(false);
+        setCart([]);
       })
       .catch((error) => {
         console.log("something went wrong: ", error);
