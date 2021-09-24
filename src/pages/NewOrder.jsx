@@ -86,7 +86,7 @@ const starchReducer = (state, action) => {
         const currentTotalChecks = newCopy.filter(
           (item) => item.checked,
         ).length;
-        console.log("currentTotalChecks: ", currentTotalChecks);
+
         if (currentTotalChecks > 1) {
           subtotal += newCopy[action.payload.index].price;
         }
@@ -220,11 +220,13 @@ const nutsReducer = (state, action) => {
 
         if (specialCheckbox) {
           newCopy.forEach((item) => {
-            if (!item.custom) {
-              item.checked = false;
-              item.disabled = true;
-            }
+            // if (!item.custom) {
+            item.checked = false;
+            item.disabled = true;
+            // }
           });
+          newCopy[action.payload.index].checked = true;
+          newCopy[action.payload.index].disabled = false;
         }
 
         const currentTotalChecks = newCopy.filter(
@@ -239,9 +241,9 @@ const nutsReducer = (state, action) => {
 
         if (specialCheckbox) {
           newCopy.forEach((item) => {
-            if (!item.custom) {
-              item.disabled = false;
-            }
+            // if (!item.custom) {
+            item.disabled = false;
+            // }
           });
         }
 
@@ -760,7 +762,11 @@ const NewOrder = () => {
                     return (
                       <div key={`nuts-${index}`}>
                         <Input
-                          id={item.custom ? "nuts-special" : `nuts-${index}`}
+                          id={
+                            item.custom
+                              ? `nuts${index}-special`
+                              : `nuts-${index}`
+                          }
                           type="checkbox"
                           name="nuts"
                           value={index}
@@ -772,7 +778,9 @@ const NewOrder = () => {
                         />
                         <label
                           htmlFor={
-                            item.custom ? "nuts-special" : `nuts-${index}`
+                            item.custom
+                              ? `nuts${index}-special`
+                              : `nuts-${index}`
                           }
                         >
                           {item.name}
