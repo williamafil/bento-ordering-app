@@ -25,7 +25,7 @@ function App() {
     <BrowserRouter>
       <div className="h-screen flex flex-col">
         <Header />
-        <main className="flex-auto">
+        <main className="flex">
           <Switch>
             <Route path="/" exact>
               <Home />

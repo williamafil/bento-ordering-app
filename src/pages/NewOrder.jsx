@@ -591,6 +591,7 @@ const NewOrder = () => {
       name: contactName,
       phone: contactNumber,
       notes: contactNote,
+      total: cartTotal,
       status: "pending",
       timestamp: {
         ".sv": "timestamp",

@@ -9,8 +9,8 @@ import "firebase/compat/auth";
 
 const navigation = [
   { name: "Home", href: "/" },
-  { name: "菜單", href: "/menu" },
-  { name: "我要訂餐", href: "/order" },
+  { name: "Menu", href: "/menu" },
+  { name: "Order Now", href: "/order" },
 ];
 
 function classNames(...classes) {
