@@ -592,6 +592,9 @@ const NewOrder = () => {
       phone: contactNumber,
       notes: contactNote,
       status: "pending",
+      timestamp: {
+        ".sv": "timestamp",
+      },
     };
 
     ordersRef
