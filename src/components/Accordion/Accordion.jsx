@@ -30,7 +30,7 @@ export const AccordionItem = ({
   item,
 }) => {
   return (
-    <div className={clxs("bg-gray-100")}>
+    <div className={clxs("bg-gray-100 w-full")}>
       <input
         type={type}
         id={id}
