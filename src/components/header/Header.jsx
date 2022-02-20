@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { BellIcon, MenuIcon, XIcon } from "@heroicons/react/outline";
+import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { useLocation } from "react-router-dom";
 import firebase from "../../utils/firebase";
 import "firebase/compat/auth";
