@@ -13,7 +13,6 @@ const Dashboard = () => {
 
     firebase.auth().onAuthStateChanged((currentUser) => {
       if (mounted) {
-        console.log("app user: ", currentUser);
         setUser(currentUser);
       }
     });
@@ -23,7 +22,11 @@ const Dashboard = () => {
     };
   }, []);
 
-  return <>{user ? <Orders /> : <Login />}</>;
+  return (
+    <div className="container mx-auto py-4">
+      {user ? <Orders /> : <Login />}
+    </div>
+  );
 };
 
 export default Dashboard;

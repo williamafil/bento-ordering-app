@@ -27,7 +27,6 @@ const currentState = (current) => {
 };
 
 const OrderStatusAction = (props) => {
-  // console.log("initialState: ", initialState);
   const [current, send] = useMachine(orderStatusMachine, {
     actions: {
       resettledAction,
@@ -112,6 +111,19 @@ const OrderStatusAction = (props) => {
           >
             {actionLabel("READY_TO_GO")}
           </button>
+
+          <button
+            type="button"
+            className={clxs(
+              "px-6 py-3 rounded-full  text-sm tracking-wider font-semibold",
+              badgeColor("canceled"),
+            )}
+            onClick={(event) =>
+              onUpdateStatusHandler(event, "CANCELING", "canceled")
+            }
+          >
+            {actionLabel("CANCELING")}
+          </button>
         </>
       ) : null}
 
@@ -134,16 +146,17 @@ const OrderStatusAction = (props) => {
 
       {current.matches("delivered") ? (
         <>
-          {/* <button
+          <button
             type="button"
             className={clxs(
               "cursor-not-allowed",
               "px-6 py-3 rounded-full text-sm tracking-wider font-semibold",
-              badgeColor("delivered"),
+              "bg-gray-200 text-gray-400",
             )}
+            disabled
           >
-            {actionLabel("DELIVERED")}
-          </button> */}
+            訂單已完成
+          </button>
         </>
       ) : null}
 

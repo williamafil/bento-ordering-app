@@ -22,7 +22,7 @@ export const badgeLabel = (status) => {
     case "inProgress":
       return "準備中";
     case "ready":
-      return "餐點已備妥";
+      return "待出餐";
     case "delivered":
       return "已取餐";
     case "canceled":

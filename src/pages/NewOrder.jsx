@@ -457,9 +457,8 @@ const NewOrder = () => {
   };
 
   const onChangeCheckboxHandler = (event) => {
-    console.log(event.target);
     const special = event.target.id.split("-")[1] === "special";
-    console.log("checkbox id: ", special);
+
     switch (event.target.name) {
       case "starch":
         dispatchStarch({
@@ -497,7 +496,6 @@ const NewOrder = () => {
   };
 
   const onSubmitHandler = (event) => {
-    console.log("onSubmit triggered");
     event.preventDefault();
 
     const bento = {
@@ -524,7 +522,6 @@ const NewOrder = () => {
       price: bentoPrice,
     };
 
-    // console.log(bento);
     setCart((prevState) => {
       return [...prevState, bento];
     });
@@ -555,12 +552,10 @@ const NewOrder = () => {
   };
 
   const hideModalHandler = () => {
-    console.log("close");
     setShowModal(false);
   };
 
   const inputChangeHandler = (event) => {
-    console.log(event.target.name);
     switch (event.target.name) {
       case "contact-name":
         setContactName(event.target.value);
@@ -577,7 +572,6 @@ const NewOrder = () => {
   };
 
   const onRemoveBentoHandler = (idx) => {
-    console.log("remove: ", idx);
     const newCart = cart.filter((item, index) => index !== idx);
     setCart(newCart);
   };
@@ -628,7 +622,7 @@ const NewOrder = () => {
           onCheckoutOrder={onCheckoutHandler}
         />
       )}
-      <main className="container mx-auto py-4">
+      <div className="container mx-auto py-4">
         <h2 className="text-center text-xl font-semibold">建立訂單</h2>
 
         <div className="flex">
@@ -939,7 +933,7 @@ const NewOrder = () => {
             </button>
           </aside>
         </div>
-      </main>
+      </div>
     </Fragment>
   );
 };

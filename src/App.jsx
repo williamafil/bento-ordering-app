@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Header from "./components/header/Header";
-import "./App.css";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
-import NewOrder from "./pages/NewOrder";
-import Menu from "./pages/Menu";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Dashboard from "./pages/Dashboard/Dashboard";
 
 import firebase from "./utils/firebase";
 import "firebase/compat/auth";
+import Login from "./pages/Login";
+import NewOrder from "./pages/NewOrder";
+import Header from "./components/Header/Header";
+import Dashboard from "./pages/Dashboard/Dashboard";
+import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     firebase.auth().onAuthStateChanged((currentUser) => {
-      console.log("app user: ", currentUser);
       setUser(currentUser);
     });
   }, []);
@@ -28,10 +25,7 @@ function App() {
         <main className="flex-auto">
           <Switch>
             <Route path="/" exact>
-              <Home />
-            </Route>
-            <Route path="/menu">
-              <Menu />
+              <Redirect to="/order" />
             </Route>
             <Route path="/order">
               <NewOrder />
@@ -40,8 +34,7 @@ function App() {
               <Login />
             </Route>
             <Route path="/adm">
-              {/* {user ? <Dashboard /> : <Redirect to="/login" />} */}
-              <Dashboard />
+              {user ? <Dashboard /> : <Redirect to="/login" />}
             </Route>
           </Switch>
         </main>

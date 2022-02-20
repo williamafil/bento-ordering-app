@@ -1,22 +1,9 @@
 import React, { Fragment, useEffect, useState } from "react";
-import OrderStatusAction from "./OrderStatusAction";
-import firebase from "../../utils/firebase";
 import "firebase/compat/database";
+import firebase from "../../utils/firebase";
 import clxs from "../../utils/clxs";
+import OrderStatusAction from "./OrderStatusAction";
 import { badgeColor, badgeLabel } from "../../utils/badge";
-
-const people = [
-  {
-    name: "Jane Cooper",
-    title: "Regional Paradigm Technician",
-    department: "Optimization",
-    role: "Admin",
-    email: "jane.cooper@example.com",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  // More people...
-];
 
 const Order = ({ order }) => {
   const [orderStatus, setOrderStatus] = useState(order.status);
@@ -25,14 +12,15 @@ const Order = ({ order }) => {
     const orderRef = firebase.database().ref("Orders/" + order.id);
 
     orderRef.on("value", (snapshot) => {
-      console.log("更新：", snapshot.val());
       const status = snapshot.val().status;
       setOrderStatus(status);
     });
   }, []);
 
   return (
-    <article>
+    <article
+      className={clxs("border border-t border-gray-100", "sm:border-none")}
+    >
       <input
         id={order.id}
         name="order-accordion"
@@ -42,53 +30,75 @@ const Order = ({ order }) => {
       {/* :: Order */}
       <label
         htmlFor={order.id}
-        className="w-full flex items-center peer-checked:bg-gray-100"
+        className="py-4 w-full flex flex-wrap sm:flex-nowrap sm:flex-row items-center peer-checked:bg-gray-100"
       >
-        <div className="w-4/12 px-6 py-4 whitespace-nowrap">
+        <div
+          className={clxs(
+            "order-1 w-3/4",
+            "sm:order-none",
+            "sm:px-6 sm:py-4 sm:w-4/12 sm:whitespace-nowrap",
+          )}
+        >
           <div className="flex items-center">
-            <div className="flex-shrink-0 h-10 w-10">
-              <img
-                className="h-10 w-10 rounded-full"
-                src={people[0].image}
-                alt=""
-              />
-            </div>
             <div className="ml-4">
-              <div className="text-sm font-medium text-gray-900">
+              <div
+                className={clxs(
+                  "text-base font-semibold text-gray-900",
+                  "sm:text-sm",
+                )}
+              >
                 {order.name}
               </div>
               <div className="text-sm text-gray-500">{order.phone}</div>
             </div>
           </div>
         </div>
-        <div className="w-3/12 px-6 py-4 whitespace-nowrap">
+        <div
+          className={clxs(
+            "order-3 w-3/4",
+            "sm:order-none",
+            "sm:px-6 sm:py-4 sm:w-3/12 lg:whitespace-nowrap",
+          )}
+        >
           <div className="text-sm text-gray-900">
             <div className="ml-4">
               <div className="text-sm font-medium text-gray-900">
                 {order.timestamp}
               </div>
-              <div className="text-sm text-gray-500">{order.notes}</div>
             </div>
           </div>
           <div className="text-sm text-gray-500"> </div>
         </div>
-        <div className="w-2/12 px-6 py-2 whitespace-nowrap">
+        <div
+          className={clxs(
+            "order-2 w-1/4 text-right",
+            "sm:order-none sm:text-center",
+            "sm:w-2/12 sm:px-6 sm:py-2 sm:whitespace-nowrap",
+          )}
+        >
           <span
             className={clxs(
-              "px-2 inline-flex text-xs leading-5 font-semibold rounded-full",
+              "mr-4 px-3 py-1 inline-flex text-xs leading-5 font-light rounded-full",
+              "sm:py-0 sm:px-2 sm:font-semibold",
               badgeColor(orderStatus),
             )}
           >
             {badgeLabel(orderStatus)}
           </span>
         </div>
-        <div className="w-2/12 px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-          ${order.total}
+        <div
+          className={clxs(
+            "order-4 text-gray-800 w-1/4 font-bold text-right",
+            "sm:order-none sm:text-left",
+            "sm:text-sm sm:w-2/12 sm:px-6 sm:py-4 sm:whitespace-nowrap ",
+          )}
+        >
+          <span className="mr-5">${order.total}</span>
         </div>
-        <div className="w-1/12 px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></div>
+        <div className="sr-only w-1/12 px-6 py-4 whitespace-nowrap text-right text-sm font-medium"></div>
       </label>
       {/* :: Order Detail */}
-      <div className="max-h-0 overflow-hidden peer-checked:max-h-full">
+      <div className={clxs("max-h-0 overflow-hidden peer-checked:max-h-full")}>
         <div className="px-6 pt-1 pb-4 bg-gray-100 whitespace-nowrap">
           <ol className="list-inside list-decimal">
             {order.bentos.map((item, index) => (

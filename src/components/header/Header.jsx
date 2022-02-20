@@ -1,4 +1,3 @@
-/* This example requires Tailwind CSS v2.0+ */
 import React, { Fragment, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
@@ -7,11 +6,7 @@ import { useLocation } from "react-router-dom";
 import firebase from "../../utils/firebase";
 import "firebase/compat/auth";
 
-const navigation = [
-  { name: "Home", href: "/" },
-  { name: "Menu", href: "/menu" },
-  { name: "Order Now", href: "/order" },
-];
+const navigation = [{ name: "Order Now", href: "/order" }];
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -26,7 +21,6 @@ const Header = () => {
 
     firebase.auth().onAuthStateChanged((currentUser) => {
       if (mounted) {
-        console.log("current user: ", currentUser);
         setUser(currentUser);
       }
     });
@@ -54,17 +48,8 @@ const Header = () => {
                 </Disclosure.Button>
               </div>
               <div className="flex-1 flex items-center justify-center sm:items-stretch sm:justify-start">
-                <div className="flex-shrink-0 flex items-center">
-                  <img
-                    className="block lg:hidden h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg"
-                    alt="Workflow"
-                  />
-                  <img
-                    className="hidden lg:block h-8 w-auto"
-                    src="https://tailwindui.com/img/logos/workflow-logo-indigo-500-mark-white-text.svg"
-                    alt="Workflow"
-                  />
+                <div className="flex-shrink-0 flex items-center text-white font-bold text-lg">
+                  便當仔
                 </div>
 
                 {/* DESC:    Navigation */}
@@ -92,14 +77,6 @@ const Header = () => {
               </div>
               {user && (
                 <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-                  <button
-                    type="button"
-                    className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                  >
-                    <span className="sr-only">View notifications</span>
-                    <BellIcon className="h-6 w-6" aria-hidden="true" />
-                  </button>
-
                   {/* DESC:   Admin avatar dropdown */}
                   <Menu as="div" className="ml-3 relative">
                     <div>
@@ -122,32 +99,6 @@ const Header = () => {
                       leaveTo="transform opacity-0 scale-95"
                     >
                       <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
-                        <Menu.Item>
-                          {({ active }) => (
-                            <Link
-                              to="/adm"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700",
-                              )}
-                            >
-                              Dashboard
-                            </Link>
-                          )}
-                        </Menu.Item>
-                        <Menu.Item>
-                          {({ active }) => (
-                            <a
-                              href="#"
-                              className={classNames(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700",
-                              )}
-                            >
-                              Settings
-                            </a>
-                          )}
-                        </Menu.Item>
                         <Menu.Item>
                           {({ active }) => (
                             <a

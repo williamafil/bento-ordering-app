@@ -29,13 +29,10 @@ const Login = () => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((res) => {
-        console.log("res: ", res);
         setIsLoading(false);
         history.push("/adm");
       })
       .catch((error) => {
-        console.log("error: ", error);
-        console.log("error.code: ", error.code);
         setIsLoading(false);
         switch (error.code) {
           case "auth/invalid-email":
