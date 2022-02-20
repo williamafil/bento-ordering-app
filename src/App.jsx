@@ -5,7 +5,7 @@ import firebase from "./utils/firebase";
 import "firebase/compat/auth";
 import Login from "./pages/Login";
 import NewOrder from "./pages/NewOrder";
-import { Header } from "./components/Header";
+import Header from "./components/header/Header";
 import Dashboard from "./pages/Dashboard/Dashboard";
 import "./App.css";
 
