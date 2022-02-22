@@ -63,7 +63,7 @@ const Order = ({ order }) => {
           <div className="text-sm text-gray-900">
             <div className="ml-4">
               <div className="text-sm font-medium text-gray-900">
-                {order.timestamp}
+                {order.createdAt}
               </div>
             </div>
           </div>

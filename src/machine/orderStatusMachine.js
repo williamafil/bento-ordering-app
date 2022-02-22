@@ -20,6 +20,7 @@ export const orderStatusMachine = createMachine({
     inProgress: {
       on: {
         READY_TO_GO: "ready",
+        CANCELING: "canceled",
       },
     },
     ready: {
