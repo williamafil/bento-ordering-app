@@ -57,11 +57,8 @@ const OrderStatusAction = (props) => {
 
   const onUpdateStatusHandler = (event, action, status = "pending") => {
     event.preventDefault();
-
-    console.log("props.orderId: ", props.orderId);
     const orderRef = firebase.database().ref("Orders/" + props.orderId);
     orderRef.update({ status }).then((res) => {
-      console.log("res: ", res);
       send(action);
     });
   };
@@ -74,7 +71,7 @@ const OrderStatusAction = (props) => {
             type="button"
             className={clxs(
               "px-6 py-3 rounded-full  text-sm tracking-wider font-semibold",
-              badgeColor("inProgress"),
+              badgeColor("inProgress")
             )}
             onClick={(event) =>
               onUpdateStatusHandler(event, "PROCEEDING", "inProgress")
@@ -86,7 +83,7 @@ const OrderStatusAction = (props) => {
             type="button"
             className={clxs(
               "px-6 py-3 rounded-full  text-sm tracking-wider font-semibold",
-              badgeColor("canceled"),
+              badgeColor("canceled")
             )}
             onClick={(event) =>
               onUpdateStatusHandler(event, "CANCELING", "canceled")
@@ -103,7 +100,7 @@ const OrderStatusAction = (props) => {
             type="button"
             className={clxs(
               "px-6 py-3 rounded-full  text-sm tracking-wider font-semibold",
-              badgeColor("ready"),
+              badgeColor("ready")
             )}
             onClick={(event) =>
               onUpdateStatusHandler(event, "READY_TO_GO", "ready")
@@ -116,7 +113,7 @@ const OrderStatusAction = (props) => {
             type="button"
             className={clxs(
               "px-6 py-3 rounded-full  text-sm tracking-wider font-semibold",
-              badgeColor("canceled"),
+              badgeColor("canceled")
             )}
             onClick={(event) =>
               onUpdateStatusHandler(event, "CANCELING", "canceled")
@@ -133,7 +130,7 @@ const OrderStatusAction = (props) => {
             type="button"
             className={clxs(
               "px-6 py-3 rounded-full  text-sm tracking-wider font-semibold",
-              badgeColor("delivered"),
+              badgeColor("delivered")
             )}
             onClick={(event) =>
               onUpdateStatusHandler(event, "DELIVERED", "delivered")
@@ -151,7 +148,7 @@ const OrderStatusAction = (props) => {
             className={clxs(
               "cursor-not-allowed",
               "px-6 py-3 rounded-full text-sm tracking-wider font-semibold",
-              "bg-gray-200 text-gray-400",
+              "bg-gray-200 text-gray-400"
             )}
             disabled
           >
@@ -166,7 +163,7 @@ const OrderStatusAction = (props) => {
             type="button"
             className={clxs(
               "px-6 py-3 rounded-full text-sm tracking-wider font-semibold",
-              badgeColor(),
+              badgeColor()
             )}
             onClick={(event) => onUpdateStatusHandler(event, "RESET")}
           >

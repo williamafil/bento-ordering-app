@@ -8,56 +8,21 @@ import Order from "./Order";
 
 const Orders = () => {
   const { state, dispatch } = useContext(NoticeContext);
-  console.log("notices state: ", state);
   const [isLoading, setIsLoading] = useState(true);
   const [initialLoad, setInitialLoad] = useState(false);
   const [orders, setOrders] = useState([]);
-
-  // const ordersRef = firebase
-  //   .database()
-  //   .ref("/Orders")
-  //   .orderByChild("timestamp");
-  // console.log("ordersRef:", ordersRef);
-
-  // const onListenChildAdded = () => {
-  //   ordersRef.on("child_added", (snapshot) => {
-  //     if (initialLoad) {
-  //       console.log("有新訂單");
-  //       setOrders((prevState) => {
-  //         const convertedDatetime = new Date(
-  //           snapshot.val().timestamp,
-  //         ).toLocaleString("en-US", {
-  //           year: "numeric",
-  //           month: "short",
-  //           day: "numeric",
-  //           hour: "2-digit",
-  //           minute: "2-digit",
-  //         });
-  //         return [
-  //           {
-  //             ...snapshot.val(),
-  //             timestamp: convertedDatetime,
-  //             id: snapshot.key,
-  //           },
-  //           ...prevState,
-  //         ];
-  //       });
-  //     }
-  //   });
-  // };
 
   useEffect(() => {
     const ordersRef = firebase
       .database()
       .ref("/Orders")
       .orderByChild("timestamp");
-    console.log("ordersRef:", ordersRef);
 
     ordersRef.on("child_added", (snapshot) => {
       // NEW ORDER LISTENER
 
       const convertedDatetime = new Date(
-        snapshot.val().timestamp,
+        snapshot.val().timestamp
       ).toLocaleString("en-US", {
         year: "numeric",
         month: "short",
@@ -88,7 +53,6 @@ const Orders = () => {
       });
     });
     setIsLoading(false);
-    console.log("setIsLoading to false");
     setInitialLoad(true);
   }, []);
 
@@ -128,7 +92,6 @@ const Orders = () => {
                   <form>
                     {isLoading && orders.length === 0 && (
                       <>
-                        {console.log("i am loading")}
                         <div className="pt-20 text-center text-black">
                           Loading...
                         </div>

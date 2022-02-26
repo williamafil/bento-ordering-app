@@ -1,28 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { BrowserRouter, Switch, Route, Redirect } from "react-router-dom";
-
-import firebase from "./utils/firebase";
-import "firebase/compat/auth";
 import Login from "./pages/Login";
 import NewOrder from "./pages/NewOrder";
 import Header from "./components/header/Header";
 import Dashboard from "./pages/Dashboard/Dashboard";
-
+import { UserContext } from "./contexts/user-context";
 import "./App.css";
 
 function App() {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      setUser(currentUser);
-    });
-  }, []);
+  const { user, isLoggedIn } = useContext(UserContext);
 
   return (
     <BrowserRouter>
       <div className="h-screen flex flex-col">
-        <Header />
+        <Header user={user} />
         <main className="flex-auto">
           <Switch>
             <Route path="/" exact>
@@ -35,7 +26,11 @@ function App() {
               <Login />
             </Route>
             <Route path="/adm">
-              {user ? <Dashboard /> : <Redirect to="/login" />}
+              {isLoggedIn ? (
+                <Dashboard user={user} />
+              ) : (
+                <Redirect to="/login" />
+              )}
             </Route>
           </Switch>
         </main>

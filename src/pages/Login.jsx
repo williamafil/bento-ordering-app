@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import Icons from "../components/Icons";
 import clxs from "../utils/clxs";
+import { UserContext } from "../contexts/user-context";
 import { useHistory } from "react-router-dom";
 import firebase from "../utils/firebase";
 import "firebase/compat/auth";
 
 const Login = () => {
+  const auth = useContext(UserContext);
   const history = useHistory();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,7 +31,7 @@ const Login = () => {
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((res) => {
-        setIsLoading(false);
+        auth.login(res.user);
         history.push("/adm");
       })
       .catch((error) => {
@@ -49,14 +51,9 @@ const Login = () => {
   };
 
   return (
-    <div className="h-full flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="pt-20 h-full flex justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-sm w-full space-y-1">
         <div>
-          <img
-            className="mx-auto h-12 w-auto"
-            src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-            alt="Workflow"
-          />
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
@@ -105,7 +102,7 @@ const Login = () => {
                 "border border-transparent text-sm rounded-md",
                 "text-white bg-indigo-600 font-medium",
                 "hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-                isLoading && "disabled cursor-default",
+                isLoading && "disabled cursor-default"
               )}
             >
               {isLoading ? <Icons.Loading /> : "Sign In "}

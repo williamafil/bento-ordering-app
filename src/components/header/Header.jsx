@@ -1,34 +1,22 @@
-import React, { Fragment, useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import React, { Fragment, useContext } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
-import { useLocation } from "react-router-dom";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+
+import clxs from "../../utils/clxs";
 import firebase from "../../utils/firebase";
-import "firebase/compat/auth";
+import { UserContext } from "../../contexts/user-context";
 
 const navigation = [{ name: "Order Now", href: "/order" }];
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
-
-const Header = () => {
+const Header = ({ user }) => {
+  const auth = useContext(UserContext);
   const { pathname } = useLocation();
-  const [user, setUser] = useState(null);
 
-  useEffect(() => {
-    let mounted = true;
-
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      if (mounted) {
-        setUser(currentUser);
-      }
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+  const logoutHandler = () => {
+    firebase.auth().signOut();
+    auth.logout();
+  };
 
   return (
     <Disclosure as="nav" className="bg-gray-800 h-16">
@@ -59,11 +47,11 @@ const Header = () => {
                       <a
                         key={item.name}
                         href={item.href}
-                        className={classNames(
+                        className={clxs(
                           item.href === pathname
                             ? "bg-gray-900 text-white"
                             : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                          "px-3 py-2 rounded-md text-sm font-medium",
+                          "px-3 py-2 rounded-md text-sm font-medium"
                         )}
                         aria-current={
                           item.href === pathname ? "page" : undefined
@@ -103,11 +91,11 @@ const Header = () => {
                           {({ active }) => (
                             <a
                               href="#"
-                              className={classNames(
+                              className={clxs(
                                 active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700",
+                                "block px-4 py-2 text-sm text-gray-700"
                               )}
-                              onClick={() => firebase.auth().signOut()}
+                              onClick={logoutHandler}
                             >
                               Sign out
                             </a>
@@ -128,11 +116,11 @@ const Header = () => {
                 <Link
                   key={item.name}
                   to={item.href}
-                  className={classNames(
+                  className={clxs(
                     item.href === pathname
                       ? "bg-gray-900 text-white"
                       : "text-gray-300 hover:bg-gray-700 hover:text-white",
-                    "block px-3 py-2 rounded-md text-base font-medium",
+                    "block px-3 py-2 rounded-md text-base font-medium"
                   )}
                   aria-current={item.href === pathname ? "page" : undefined}
                 >

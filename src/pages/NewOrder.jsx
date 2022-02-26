@@ -84,7 +84,7 @@ const starchReducer = (state, action) => {
           newCopy[action.payload.index].disabled = false;
         }
         const currentTotalChecks = newCopy.filter(
-          (item) => item.checked,
+          (item) => item.checked
         ).length;
 
         if (currentTotalChecks > 1) {
@@ -102,7 +102,7 @@ const starchReducer = (state, action) => {
         }
 
         const currentTotalChecks = newCopy.filter(
-          (item) => item.checked,
+          (item) => item.checked
         ).length;
 
         if (currentTotalChecks >= 1) {
@@ -155,7 +155,7 @@ const veggieReducer = (state, action) => {
         }
 
         const currentTotalChecks = newCopy.filter(
-          (item) => item.checked,
+          (item) => item.checked
         ).length;
 
         if (currentTotalChecks > 7) {
@@ -175,7 +175,7 @@ const veggieReducer = (state, action) => {
         }
 
         const currentTotalChecks = newCopy.filter(
-          (item) => item.checked,
+          (item) => item.checked
         ).length;
 
         if (currentTotalChecks >= 7) {
@@ -230,7 +230,7 @@ const nutsReducer = (state, action) => {
         }
 
         const currentTotalChecks = newCopy.filter(
-          (item) => item.checked,
+          (item) => item.checked
         ).length;
 
         if (currentTotalChecks > 1) {
@@ -248,7 +248,7 @@ const nutsReducer = (state, action) => {
         }
 
         const currentTotalChecks = newCopy.filter(
-          (item) => item.checked,
+          (item) => item.checked
         ).length;
 
         if (currentTotalChecks >= 1) {
@@ -377,7 +377,7 @@ const NewOrder = () => {
           sauceIsValid &&
           starchIsValid &&
           veggieIsValid &&
-          nutsIsValid,
+          nutsIsValid
       );
     }, 500);
 
@@ -796,7 +796,7 @@ const NewOrder = () => {
                   className={clxs(
                     "mt-4 px-6 py-2 border border-black",
                     !formIsValid &&
-                      "cursor-not-allowed text-gray-300 border-gray-300 bg-gray-100",
+                      "cursor-not-allowed text-gray-300 border-gray-300 bg-gray-100"
                   )}
                   disabled={!formIsValid}
                 />
@@ -829,7 +829,7 @@ const NewOrder = () => {
                         <li
                           className={clxs(
                             "list-decimal",
-                            index >= 1 && "text-red-500",
+                            index >= 1 && "text-red-500"
                           )}
                           key={`${item.id}-${Math.random()}`}
                         >
@@ -848,7 +848,7 @@ const NewOrder = () => {
                         <li
                           className={clxs(
                             "list-decimal",
-                            index >= 7 && "text-red-500",
+                            index >= 7 && "text-red-500"
                           )}
                           key={`${item.id}-checkedStarch`}
                         >
@@ -867,7 +867,7 @@ const NewOrder = () => {
                         <li
                           className={clxs(
                             "list-decimal",
-                            index >= 1 && "text-red-500",
+                            index >= 1 && "text-red-500"
                           )}
                           key={`${item.id}-checkedStarch`}
                         >
@@ -925,7 +925,7 @@ const NewOrder = () => {
                 "border border-black px-4 py-2",
                 "hover:bg-gray-200",
                 cart.length <= 0 &&
-                  "cursor-not-allowed text-gray-300 border-gray-300 bg-gray-100",
+                  "cursor-not-allowed text-gray-300 border-gray-300 bg-gray-100"
               )}
               disabled={cart.length <= 0}
             >

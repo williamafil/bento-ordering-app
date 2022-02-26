@@ -5,22 +5,7 @@ import "firebase/compat/auth";
 import Login from "../Login";
 import Orders from "../../components/Orders/Orders";
 
-const Dashboard = () => {
-  const [user, setUser] = useState(true);
-
-  useEffect(() => {
-    let mounted = true;
-
-    firebase.auth().onAuthStateChanged((currentUser) => {
-      if (mounted) {
-        setUser(currentUser);
-      }
-    });
-
-    return () => {
-      mounted = false;
-    };
-  }, []);
+const Dashboard = ({user}) => {
 
   return (
     <div className="container mx-auto py-4">
