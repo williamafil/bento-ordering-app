@@ -15,7 +15,13 @@ email: a@a.com // pass: 123456
 
 ---
 
-### TODO:
+#### TODO:
 
 - Refactor form items. The current code is too long and not flexible. Similar items can be re-written into reusable functions.
 - Add order filtering: today's, past, and future, incompleted orders, etc.
+
+#### SCREENSHOTS:
+
+![](https://raw.githubusercontent.com/williamafil/bento-ordering-app/main/public/screenshot-1.png)
+
+![](https://raw.githubusercontent.com/williamafil/bento-ordering-app/main/public/screenshot-2.png)
