@@ -1,21 +1,20 @@
-import React, { Fragment, useContext } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { Fragment } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import { MenuIcon, XIcon } from "@heroicons/react/outline";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 
+import Icons from "../Icons";
 import clxs from "../../utils/clxs";
 import firebase from "../../utils/firebase";
-import { UserContext } from "../../contexts/user-context";
 
 const navigation = [{ name: "Order Now", href: "/order" }];
 
-const Header = ({ user }) => {
-  const auth = useContext(UserContext);
+const Header = ({ user, logout }) => {
   const { pathname } = useLocation();
 
   const logoutHandler = () => {
     firebase.auth().signOut();
-    auth.logout();
+    logout();
   };
 
   return (
@@ -70,11 +69,16 @@ const Header = ({ user }) => {
                     <div>
                       <Menu.Button className="bg-gray-800 flex text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
                         <span className="sr-only">Open user menu</span>
-                        <img
-                          className="h-8 w-8 rounded-full"
-                          src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                          alt=""
-                        />
+                        {user.photoURL && (
+                          <img
+                            className="h-8 w-8 rounded-full"
+                            src={user.photoURL}
+                            alt={user.email}
+                          />
+                        )}
+                        {!user.photoURL && (
+                          <Icons.Avatar className="w-8 h-8 p-1 rounded-full bg-gray-200 border-2 border-white" />
+                        )}
                       </Menu.Button>
                     </div>
                     <Transition
@@ -86,19 +90,28 @@ const Header = ({ user }) => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="z-20 origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <Menu.Item>
+                          <NavLink
+                            to="/adm"
+                            activeClassName="bg-gray-100"
+                            className={clxs(
+                              "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
+                            )}
+                          >
+                            Dashboard
+                          </NavLink>
+                        </Menu.Item>
                         <Menu.Item>
                           {({ active }) => (
-                            <a
-                              href="#"
+                            <button
                               className={clxs(
-                                active ? "bg-gray-100" : "",
-                                "block px-4 py-2 text-sm text-gray-700"
+                                "w-full block text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-200"
                               )}
                               onClick={logoutHandler}
                             >
                               Sign out
-                            </a>
+                            </button>
                           )}
                         </Menu.Item>
                       </Menu.Items>
@@ -113,7 +126,7 @@ const Header = ({ user }) => {
           <Disclosure.Panel className="sm:hidden">
             <div className="px-2 pt-2 pb-3 space-y-1">
               {navigation.map((item) => (
-                <Link
+                <NavLink
                   key={item.name}
                   to={item.href}
                   className={clxs(
@@ -125,7 +138,7 @@ const Header = ({ user }) => {
                   aria-current={item.href === pathname ? "page" : undefined}
                 >
                   {item.name}
-                </Link>
+                </NavLink>
               ))}
             </div>
           </Disclosure.Panel>

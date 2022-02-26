@@ -8,12 +8,12 @@ import { UserContext } from "./contexts/user-context";
 import "./App.css";
 
 function App() {
-  const { user, isLoggedIn } = useContext(UserContext);
+  const { user, isLoggedIn, logout } = useContext(UserContext);
 
   return (
     <BrowserRouter>
       <div className="h-screen flex flex-col">
-        <Header user={user} />
+        <Header user={user} logout={logout} />
         <main className="flex-auto">
           <Switch>
             <Route path="/" exact>

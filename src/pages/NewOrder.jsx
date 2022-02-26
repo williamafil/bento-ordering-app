@@ -594,7 +594,7 @@ const NewOrder = () => {
 
     ordersRef
       .push(order)
-      .then((res) => {
+      .then(() => {
         setContactFormIsValid(false);
         setContactName("");
         setContactNumber("");
