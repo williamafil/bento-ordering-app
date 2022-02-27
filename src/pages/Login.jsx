@@ -109,6 +109,7 @@ const Login = () => {
             </button>
           </div>
         </form>
+        <p className="text-center pt-2 text-xs">a@a.com / 123456</p>
       </div>
     </div>
   );
